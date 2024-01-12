@@ -69,6 +69,7 @@ gui.add(waterMaterial.uniforms.uSmallWavesIterations, 'value').name('uSmallWaveI
 gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').name('uBigWaveSpeed').min(0).max(4).step(0.001)
 gui.add(waterMaterial.uniforms.fogNear, 'value').name('fogNear').min(0).max(100).step(0.001)
 gui.add(waterMaterial.uniforms.fogFar, 'value').name('fogFar').min(0).max(100).step(0.001)
+console.log('checking build faileLL;;');
 gui.addColor(waterMaterial.uniforms.fogColor, 'value').name('fogColor').onChange(() =>
 {
     waterMaterial.uniforms.fogColor.value.set(debugObject.fogColor)
