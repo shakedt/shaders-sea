@@ -12,7 +12,8 @@ const gui = new GUI({ width: 340 })
 
 const debugObject = {
     depthColor: '#186691',
-    surfaceColor: '#5985a1' // acbdc8
+    surfaceColor: '#5985a1', // acbdc8
+    fogColor: '#00FF00'
 }
 
 // Canvas
@@ -32,6 +33,7 @@ const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512)
 const waterMaterial = new THREE.ShaderMaterial({
     vertexShader: vertex,
     fragmentShader: fragment,
+    fog: true,
     uniforms:
     {
         uTime: { value: 0 },
@@ -49,6 +51,10 @@ const waterMaterial = new THREE.ShaderMaterial({
         uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
         uColorOffset: { value: 0.08 },
         uColorMultiplier: { value: 5 },
+
+        fogColor: { value: new THREE.Color(debugObject.fogColor) },
+        fogNear: { value: 0 },
+        fogFar:  { value: 100 },
     }
 })
 
@@ -61,7 +67,12 @@ gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').name('uSmallWavesF
 gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').name('uSmallWaveSpeed').min(0).max(4).step(0.001)
 gui.add(waterMaterial.uniforms.uSmallWavesIterations, 'value').name('uSmallWaveIterations').min(0).max(30).step(1)
 gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').name('uBigWaveSpeed').min(0).max(4).step(0.001)
-
+gui.add(waterMaterial.uniforms.fogNear, 'value').name('fogNear').min(0).max(100).step(0.001)
+gui.add(waterMaterial.uniforms.fogFar, 'value').name('fogFar').min(0).max(100).step(0.001)
+gui.addColor(waterMaterial.uniforms.fogColor, 'value').name('fogColor').onChange(() =>
+{
+    waterMaterial.uniforms.fogColor.value.set(debugObject.fogColor)
+})
 gui.addColor(debugObject, 'depthColor').onChange(() =>
 {
     waterMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor)
@@ -76,6 +87,7 @@ gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').name('uColorMultiplier
 const water = new THREE.Mesh(waterGeometry, waterMaterial)
 water.rotation.x = - Math.PI * 0.5
 scene.add(water)
+
 
 /**
  * Sizes
@@ -125,7 +137,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 const clock = new THREE.Clock()
-
+// For linear fog:
+var fog = new THREE.Fog(debugObject.fogColor, waterMaterial.fogNear, waterMaterial.fogFar); // Color, near distance, far distance
+scene.fog = fog;
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()

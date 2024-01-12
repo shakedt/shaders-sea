@@ -7,6 +7,7 @@ uniform float uSmallWavesElevation;
 uniform float uSmallWavesFrequency;  
 uniform float uSmallWavesIterations;
 varying float vElvation;
+varying float vFragDepth;
 
 vec4 permute(vec4 x)
 {
@@ -106,6 +107,7 @@ void main() {
   vec4 projectionMatrix = projectionMatrix * viewPosition;
 
   gl_Position = projectionMatrix;
+    vFragDepth = projectionMatrix.z; 
 
   vElvation = elvation;
 }
